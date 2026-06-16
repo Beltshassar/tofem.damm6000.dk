@@ -34,32 +34,18 @@
     rafId = requestAnimationFrame(tick);
   }
 
-  // ── Desktop: mouse position ──────────────────────────────────
-  window.addEventListener('mousemove', (e) => {
+  // ── Pointer Events: covers mouse, touch, and stylus ─────────
+  // touch-action:none on .scene (set in CSS) prevents the browser
+  // from claiming the gesture, so pointermove fires on every move.
+  window.addEventListener('pointermove', (e) => {
     const w = window.innerWidth;
     const h = window.innerHeight;
     targetRx = ((e.clientY / h) - 0.5) * -MAX_TILT;
     targetRy = ((e.clientX / w) - 0.5) *  MAX_TILT;
   });
 
-  window.addEventListener('mouseleave', () => {
-    targetRx = 0;
-    targetRy = 0;
-  });
-
-  // ── Mobile: touch drag position ─────────────────────────────
-  // touchmove fires only while the finger is moving, so a plain tap
-  // on a button never triggers it — button clicks are unaffected.
-  window.addEventListener('touchmove', (e) => {
-    const t = e.touches[0];
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    targetRx = ((t.clientY / h) - 0.5) * -MAX_TILT;
-    targetRy = ((t.clientX / w) - 0.5) *  MAX_TILT;
-  }, { passive: true });
-
-  window.addEventListener('touchend',    () => { targetRx = 0; targetRy = 0; });
-  window.addEventListener('touchcancel', () => { targetRx = 0; targetRy = 0; });
+  window.addEventListener('pointerleave',  () => { targetRx = 0; targetRy = 0; });
+  window.addEventListener('pointercancel', () => { targetRx = 0; targetRy = 0; });
 
   // ── Start loop ───────────────────────────────────────────────
   tick();
