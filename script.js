@@ -47,30 +47,19 @@
     targetRy = 0;
   });
 
-  // ── Mobile: device orientation ───────────────────────────────
-  function handleOrientation(e) {
-    if (e.beta === null || e.gamma === null) return;
-    // beta  = front-to-back tilt (-180..180), gamma = left-to-right (-90..90)
-    targetRx = clamp(e.beta  * 0.15, -MAX_TILT, MAX_TILT);
-    targetRy = clamp(e.gamma * 0.20, -MAX_TILT, MAX_TILT);
-  }
+  // ── Mobile: touch drag position ─────────────────────────────
+  // touchmove fires only while the finger is moving, so a plain tap
+  // on a button never triggers it — button clicks are unaffected.
+  window.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    targetRx = ((t.clientY / h) - 0.5) * -MAX_TILT;
+    targetRy = ((t.clientX / w) - 0.5) *  MAX_TILT;
+  }, { passive: true });
 
-  // iOS 13+ requires permission for DeviceOrientationEvent
-  if (typeof DeviceOrientationEvent !== 'undefined' &&
-      typeof DeviceOrientationEvent.requestPermission === 'function') {
-    document.addEventListener('click', function askPermission() {
-      DeviceOrientationEvent.requestPermission()
-        .then(state => {
-          if (state === 'granted') {
-            window.addEventListener('deviceorientation', handleOrientation);
-          }
-        })
-        .catch(() => {});
-      document.removeEventListener('click', askPermission);
-    }, { once: true });
-  } else if (window.DeviceOrientationEvent) {
-    window.addEventListener('deviceorientation', handleOrientation);
-  }
+  window.addEventListener('touchend',    () => { targetRx = 0; targetRy = 0; });
+  window.addEventListener('touchcancel', () => { targetRx = 0; targetRy = 0; });
 
   // ── Start loop ───────────────────────────────────────────────
   tick();
