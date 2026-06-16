@@ -1,0 +1,210 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:    #0a0a0c;
+  --red:   #e8264a;
+  --cyan:  #1adde8;
+  --white: #f0eff5;
+  --dim:   rgba(240, 239, 245, 0.55);
+
+  --rx: 0deg;
+  --ry: 0deg;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Lato', sans-serif;
+}
+
+/* ── Scene & layers ── */
+
+.scene {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 800px;
+  overflow: hidden;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.08s ease-out;
+}
+
+/* Subtle noise/grain background layer */
+.layer--bg {
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(232, 38, 74, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 30%, rgba(26, 221, 232, 0.10) 0%, transparent 55%),
+    var(--bg);
+  pointer-events: none;
+}
+
+.layer--bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.035;
+  pointer-events: none;
+}
+
+.layer--content {
+  flex-direction: column;
+  gap: 3rem;
+  padding: 2rem;
+  position: relative;
+}
+
+/* ── Typography ── */
+
+.header {
+  text-align: center;
+}
+
+.headline {
+  font-family: 'Abril Fatface', serif;
+  font-size: clamp(2.8rem, 8vw, 6rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  /* anaglyph ghost layers */
+  text-shadow:
+    -3px  0px 0 rgba(232, 38, 74,  0.7),
+     3px  0px 0 rgba(26, 221, 232, 0.7);
+}
+
+.amp {
+  color: var(--dim);
+  font-size: 0.8em;
+}
+
+.sub {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.85rem, 2vw, 1.05rem);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 1rem;
+}
+
+.occasion {
+  font-family: 'Abril Fatface', serif;
+  font-size: clamp(1.6rem, 5vw, 3.2rem);
+  letter-spacing: 0.04em;
+  margin-top: 0.3rem;
+  text-shadow:
+    -2px 0px 0 rgba(232, 38, 74,  0.5),
+     2px 0px 0 rgba(26, 221, 232, 0.5);
+}
+
+.date {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.9rem, 2.2vw, 1.15rem);
+  letter-spacing: 0.18em;
+  color: var(--dim);
+  margin-top: 0.6rem;
+}
+
+/* ── CTA boxes ── */
+
+.cta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 560px;
+}
+
+@media (max-width: 480px) {
+  .cta-grid {
+    grid-template-columns: 1fr;
+    max-width: 320px;
+  }
+}
+
+.cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem 1.5rem;
+  text-decoration: none;
+  color: var(--white);
+  border: 1px solid;
+  border-radius: 2px;
+  background: rgba(10, 10, 12, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition:
+    background 0.25s ease,
+    box-shadow  0.25s ease,
+    transform   0.15s ease;
+  cursor: pointer;
+}
+
+.cta:hover,
+.cta:focus-visible {
+  transform: translateY(-3px) scale(1.02);
+}
+
+.cta--red {
+  border-color: var(--red);
+}
+
+.cta--red:hover,
+.cta--red:focus-visible {
+  background: rgba(232, 38, 74, 0.1);
+  box-shadow:
+    0 0 18px rgba(232, 38, 74, 0.45),
+    inset 0 0 12px rgba(232, 38, 74, 0.1);
+}
+
+.cta--cyan {
+  border-color: var(--cyan);
+}
+
+.cta--cyan:hover,
+.cta--cyan:focus-visible {
+  background: rgba(26, 221, 232, 0.08);
+  box-shadow:
+    0 0 18px rgba(26, 221, 232, 0.4),
+    inset 0 0 12px rgba(26, 221, 232, 0.08);
+}
+
+.cta__icon {
+  font-size: 1.1rem;
+  opacity: 0.5;
+}
+
+.cta--red  .cta__icon { color: var(--red); }
+.cta--cyan .cta__icon { color: var(--cyan); }
+
+.cta__label {
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
