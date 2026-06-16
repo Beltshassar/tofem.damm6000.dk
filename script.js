@@ -34,18 +34,32 @@
     rafId = requestAnimationFrame(tick);
   }
 
-  // ── Pointer Events: covers mouse, touch, and stylus ─────────
-  // touch-action:none on .scene (set in CSS) prevents the browser
-  // from claiming the gesture, so pointermove fires on every move.
-  window.addEventListener('pointermove', (e) => {
+  // ── Desktop: mouse ──────────────────────────────────────────
+  window.addEventListener('mousemove', (e) => {
     const w = window.innerWidth;
     const h = window.innerHeight;
     targetRx = ((e.clientY / h) - 0.5) * -MAX_TILT;
     targetRy = ((e.clientX / w) - 0.5) *  MAX_TILT;
   });
 
-  window.addEventListener('pointerleave',  () => { targetRx = 0; targetRy = 0; });
-  window.addEventListener('pointercancel', () => { targetRx = 0; targetRy = 0; });
+  window.addEventListener('mouseleave', () => { targetRx = 0; targetRy = 0; });
+
+  // ── Mobile: touch ────────────────────────────────────────────
+  // Attached to scene (not window) so { passive:false } isn't blocked.
+  // preventDefault() in touchmove stops text selection and scroll
+  // hijack on every drag. Taps on buttons never fire touchmove so
+  // click events are unaffected.
+  scene.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const t = e.touches[0];
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    targetRx = ((t.clientY / h) - 0.5) * -MAX_TILT;
+    targetRy = ((t.clientX / w) - 0.5) *  MAX_TILT;
+  }, { passive: false });
+
+  scene.addEventListener('touchend',    () => { targetRx = 0; targetRy = 0; });
+  scene.addEventListener('touchcancel', () => { targetRx = 0; targetRy = 0; });
 
   // ── Start loop ───────────────────────────────────────────────
   tick();
