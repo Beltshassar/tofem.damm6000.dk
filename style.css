@@ -210,3 +210,13 @@ body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
+.rsvp {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.75rem, 1.8vw, 0.9rem);
+  letter-spacing: 0.06em;
+  color: var(--dim);
+  text-align: center;
+  margin-top: -0.5rem;
+}
